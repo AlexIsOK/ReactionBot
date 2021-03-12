@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Listens for reactions (and messages for initialization)
@@ -77,7 +78,11 @@ public final class ReactionListener extends ListenerAdapter {
             //don't check if it errored.
             if(roleID == -1) return;
             
-            e.getGuild().addRoleToMember(e.getMember(), e.getGuild().getRoleById(roleID)).queue();
+            e.getGuild()
+                    .addRoleToMember(
+                            e.getMember(),
+                            Objects.requireNonNull(e.getGuild().getRoleById(roleID))
+                    ).queue();
         }
     }
     
@@ -89,7 +94,11 @@ public final class ReactionListener extends ListenerAdapter {
             //don't check if it errored.
             if(roleID == -1) return;
             
-            e.getGuild().removeRoleFromMember(e.getMember(), e.getGuild().getRoleById(roleID)).queue();
+            e.getGuild()
+                    .removeRoleFromMember(
+                            Objects.requireNonNull(e.getMember()),
+                            Objects.requireNonNull(e.getGuild().getRoleById(roleID))
+                    ).queue();
         }
     }
 
