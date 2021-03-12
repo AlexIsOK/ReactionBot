@@ -1,6 +1,7 @@
 package dev.alexisok.reactionbot;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -10,15 +11,14 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Listens for reactions (and messages for initialization)
  */
 public final class ReactionListener extends ListenerAdapter {
     
+    //                   emote id, role id
     private static final Map<Long, Long> REACTION_ROLES = new HashMap<>();
     
     //add all roles to map
@@ -37,6 +37,9 @@ public final class ReactionListener extends ListenerAdapter {
         
         //java
         REACTION_ROLES.put(819769314932555796L, 819692249461293076L);
+        
+        //wdev
+        REACTION_ROLES.put(819784087992664064L, 819704226674245693L);
     }
     
     @Override
@@ -60,14 +63,27 @@ public final class ReactionListener extends ListenerAdapter {
                 "<:lua:819769315619897404> - Lua\n" +
                 "<:cs:819769315024306186> - C#\n" +
                 "<:cpp:819769314945138738> - C++\n" +
-                "<:java:819769314932555796> - Java");
+                "<:java:819769314932555796> - Java\n" +
+                "<:fstack:819784087992664064> - WebDev");
         
         //green on the left side of embed
         eb.setColor(Color.GREEN);
         
         //send the message and delete command usage.
-        e.getChannel().sendMessage(eb.build()).queue();
-        e.getMessage().delete().queue();
+        e.getChannel().sendMessage(eb.build()).queue(m -> {
+            //when the message is sent, get it back here and add
+            //the reactions so people don't have to react manually.
+            List<Emote> emotes = Arrays.asList(
+                    e.getGuild().getEmoteById(819769443240116265L),
+                    e.getGuild().getEmoteById(819769315619897404L),
+                    e.getGuild().getEmoteById(819769315024306186L),
+                    e.getGuild().getEmoteById(819769314945138738L),
+                    e.getGuild().getEmoteById(819769314932555796L),
+                    e.getGuild().getEmoteById(819784087992664064L)
+            );
+            
+            emotes.forEach(r -> m.addReaction(r).queue());
+        });
     }
     
     @Override
